@@ -2,5 +2,16 @@
 name = "rucuda"
 version = "0.1.0"
 edition = "2024"
+description = "Low-level Rust FFI bindings for the CUDA Runtime API"
+license = "MIT OR Apache-2.0"
+links = "cudart"
 
-[dependencies]
+[lib]
+name = "rucuda"
+path = "src/lib.rs"
+
+[build-dependencies]
+
+[features]
+default = []
+opengl = []
