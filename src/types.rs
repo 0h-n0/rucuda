@@ -1022,21 +1022,41 @@ pub type cudaMemcpy3DOperandType = c_int;
 pub const cudaMemcpy3DOperandTypePointer: cudaMemcpy3DOperandType = 0;
 pub const cudaMemcpy3DOperandTypeArray: cudaMemcpy3DOperandType = 1;
 
-/// Memcpy 3D operand.
+/// Memcpy 3D operand (tagged union).
+///
+/// Contains either a pointer operand or an array operand, selected by `operandType`.
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct cudaMemcpy3DOperand {
     pub operandType: cudaMemcpy3DOperandType,
+    /// Union data: either `cudaMemcpy3DOperandPointer` or `cudaMemcpy3DOperandArray`.
+    /// Use `operandType` to determine which variant is active.
+    pub data: cudaMemcpy3DOperandData,
+}
+
+/// Union backing `cudaMemcpy3DOperand`. Largest variant is the array variant (32 bytes).
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub union cudaMemcpy3DOperandData {
     pub pointer: cudaMemcpy3DOperandPointer,
+    pub array: cudaMemcpy3DOperandArray,
 }
 
 /// Memcpy 3D operand pointer info.
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct cudaMemcpy3DOperandPointer {
     pub ptr: *mut c_void,
     pub pitchInBytes: usize,
     pub device: c_int,
+}
+
+/// Memcpy 3D operand array info.
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct cudaMemcpy3DOperandArray {
+    pub array: cudaArray_t,
+    pub offset: cudaPos,
 }
 
 impl core::fmt::Debug for cudaMemcpy3DOperand {
@@ -1234,9 +1254,17 @@ pub struct cudaDeviceProp {
     pub ipcEventSupported: c_int,
     pub clusterLaunch: c_int,
     pub unifiedFunctionPointers: c_int,
-    pub reserved2: [c_int; 2],
-    pub reserved: [c_int; 60],
 }
+
+// CUDA 11.x: sizeof(cudaDeviceProp) == 728 (ends at reservedSharedMemPerBlock)
+// CUDA 12.x: sizeof(cudaDeviceProp) > 728 (adds fields after reservedSharedMemPerBlock)
+// Verify with the included tests/verify_sizes.c when CUDA headers are available.
+#[cfg(test)]
+const _: () = {
+    // Minimum size check: CUDA 11 layout ends at reservedSharedMemPerBlock = 728 bytes.
+    // CUDA 12+ adds more fields so our struct must be >= 728.
+    assert!(core::mem::size_of::<cudaDeviceProp>() >= 728);
+};
 
 impl core::fmt::Debug for cudaDeviceProp {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {

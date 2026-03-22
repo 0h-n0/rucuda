@@ -32,6 +32,7 @@
 //! - [`profiler`] - Profiler Control
 //! - [`driver_entry`] - Driver Entry Point Access
 //! - [`library`] - Library Management
+//! - [`version`] - Version Management
 //! - [`graphics`] - Graphics Interoperability
 //! - `opengl` - OpenGL Interoperability (feature-gated)
 //!
@@ -71,6 +72,7 @@ pub mod external;
 pub mod profiler;
 pub mod driver_entry;
 pub mod library;
+pub mod version;
 pub mod graphics;
 
 #[cfg(feature = "opengl")]
@@ -97,15 +99,8 @@ pub use external::*;
 pub use profiler::*;
 pub use driver_entry::*;
 pub use library::*;
+pub use version::*;
 pub use graphics::*;
 
 #[cfg(feature = "opengl")]
 pub use opengl::*;
-
-// Version Management
-unsafe extern "C" {
-    /// Returns the CUDA runtime version.
-    pub fn cudaRuntimeGetVersion(runtimeVersion: *mut std::os::raw::c_int) -> cudaError_t;
-    /// Returns the CUDA driver version.
-    pub fn cudaDriverGetVersion(driverVersion: *mut std::os::raw::c_int) -> cudaError_t;
-}

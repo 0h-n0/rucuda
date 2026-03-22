@@ -71,7 +71,17 @@ unsafe extern "C" {
         value_out: *mut cudaStreamAttrValue,
     ) -> cudaError_t;
 
-    /// Query capture status of a stream.
+    /// Query capture status of a stream (v2 - without edge data).
+    pub fn cudaStreamGetCaptureInfo_v2(
+        stream: cudaStream_t,
+        captureStatus_out: *mut cudaStreamCaptureStatus,
+        id_out: *mut u64,
+        graph_out: *mut cudaGraph_t,
+        dependencies_out: *mut *const cudaGraphNode_t,
+        numDependencies_out: *mut usize,
+    ) -> cudaError_t;
+
+    /// Query capture status of a stream (v3 - with edge data).
     pub fn cudaStreamGetCaptureInfo_v3(
         stream: cudaStream_t,
         captureStatus_out: *mut cudaStreamCaptureStatus,

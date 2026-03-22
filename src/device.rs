@@ -129,7 +129,16 @@ unsafe extern "C" {
     pub fn cudaGetDeviceFlags(flags: *mut c_uint) -> cudaError_t;
 
     /// Returns information about the compute-device.
+    ///
+    /// In CUDA 12+, this is the v2 symbol. The struct layout varies by CUDA version.
+    /// Consider using [`cudaDeviceGetAttribute`] for portable property queries.
     pub fn cudaGetDeviceProperties_v2(prop: *mut cudaDeviceProp, device: c_int) -> cudaError_t;
+
+    /// Returns information about the compute-device (CUDA 11 symbol).
+    ///
+    /// This links to the original `cudaGetDeviceProperties` symbol.
+    /// On CUDA 12+, prefer `cudaGetDeviceProperties_v2`.
+    pub fn cudaGetDeviceProperties(prop: *mut cudaDeviceProp, device: c_int) -> cudaError_t;
 
     /// Initialize device to be used for GPU executions.
     pub fn cudaInitDevice(
