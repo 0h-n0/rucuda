@@ -1,6 +1,6 @@
 # rucuda
 
-[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
+![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)
 
 > Low-level Rust FFI bindings for the NVIDIA CUDA Runtime API.
 
@@ -168,7 +168,7 @@ cargo doc --no-deps   # Generate docs
 
 Licensed under either of:
 
-- [MIT License](LICENSE-MIT)
-- [Apache License, Version 2.0](LICENSE-APACHE)
+- MIT License
+- Apache License, Version 2.0
 
 at your option.
